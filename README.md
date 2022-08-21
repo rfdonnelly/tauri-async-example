@@ -1,7 +1,10 @@
-# Vue 3 + Vite
+# Tauri Async Example
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Provides an example of integrating Tauri with an async process.
+More specifically, it enables sending messages from the Tauri Webview to an async process and vice versa.
 
-## Recommended IDE Setup
+## Run
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+```sh
+npm run tauri dev
+```
