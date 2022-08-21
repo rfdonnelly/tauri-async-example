@@ -62,6 +62,8 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

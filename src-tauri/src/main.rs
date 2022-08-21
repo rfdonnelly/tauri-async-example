@@ -6,12 +6,16 @@
 use tauri::Manager;
 use tokio::sync::mpsc;
 use tokio::sync::Mutex;
+use tracing::info;
+use tracing_subscriber;
 
 struct AsyncProcInputTx {
     inner: Mutex<mpsc::Sender<String>>,
 }
 
 fn main() {
+    tracing_subscriber::fmt::init();
+
     let (async_proc_input_tx, async_proc_input_rx) = mpsc::channel(1);
     let (async_proc_output_tx, mut async_proc_output_rx) = mpsc::channel(1);
 
@@ -29,10 +33,7 @@ fn main() {
             tauri::async_runtime::spawn(async move {
                 loop {
                     if let Some(output) = async_proc_output_rx.recv().await {
-                        println!("rs: rs2js: {}", output);
-                        app_handle
-                            .emit_all("rs2js", format!("rs: {}", output))
-                            .unwrap();
+                        rs2js(output, &app_handle);
                     }
                 }
             });
@@ -43,12 +44,21 @@ fn main() {
         .expect("error while running tauri application");
 }
 
+fn rs2js<R: tauri::Runtime>(message: String, manager: &impl Manager<R>) {
+    info!(?message, "rs2js");
+    manager
+        .emit_all("rs2js", format!("rs: {}", message))
+        .unwrap();
+}
+
 #[tauri::command]
 async fn js2rs(message: String, state: tauri::State<'_, AsyncProcInputTx>) -> Result<(), String> {
-    let input = message;
-    println!("rs: js2rs: {}", input);
+    info!(?message, "js2rs");
     let async_proc_input_tx = state.inner.lock().await;
-    async_proc_input_tx.send(input).await.map_err(|e| e.to_string())
+    async_proc_input_tx
+        .send(message)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 async fn async_process_model(
