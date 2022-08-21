@@ -6,5 +6,6 @@ More specifically, it enables sending messages from the Tauri Webview to an asyn
 ## Run
 
 ```sh
+npm install
 npm run tauri dev
 ```
